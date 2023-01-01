@@ -52,24 +52,30 @@ router.get("/userUuid/:uuid", User.getUuid);
 
 router.post("/employer/login", Employers.login);
 router.post("/employer/sign", Employers.create);
-router.post("/employer/post", verifyToken, Employers.post);
+router.post("/employer/post", Employers.post);
 router.get("/employer/get", verifyToken, Employers.get);
 router.get("/employer/:id", verifyToken, Employers.getId);
 router.put("/employer/put/:id", Employers.put);
 
-router.post("/career/post", verifyToken, Careers.post);
+router.post("/career/post", Careers.post);
 router.get("/career/get", verifyToken, Careers.get);
 router.get("/career/:id", verifyToken, Careers.getId);
 
-router.post("/job/post", verifyToken, Jobs.post);
+router.post("/job/post",verifyToken, Jobs.post);
 router.get("/job/get", verifyToken, Jobs.get);
 router.get("/job/:id", verifyToken, Jobs.getId);
 router.get("/job/employerId/:id", verifyToken, Jobs.getEmployerId);
 router.put("/job/put/:id", verifyToken, Jobs.put);
+router.delete("/job/delete/:id", verifyToken, Jobs.delete);
 
 router.post("/recruitment/post", verifyToken, Recruitments.post);
 router.get("/recruitment/get", verifyToken, Recruitments.get);
 router.get("/recruitment/:id", verifyToken, Recruitments.getId);
+router.get("/recruitment/job/:id", verifyToken, Recruitments.getJobId);
+router.put("/recruitment/put/:id", verifyToken, Recruitments.put);
+router.delete("/recruitment/delete/:id"), verifyToken, Recruitments.delete;
+
+
 router.get("/recruitment/put/:id", verifyToken, Recruitments.put);
 
 router.post("/messenger/post", verifyToken, Messenger.post);

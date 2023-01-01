@@ -57,7 +57,7 @@ exports.create = async (req, res) => {
 }
 
 exports.login = async (req, res) => {
-     console.log("accessToken", req.body)
+    console.log("accessToken", req.body)
     Users.findOne({ where: { email: req.body.email } }).then(user => {
         bcrypt.compare(req.body.password, user.password).then(async (result) => {
             if (result) {

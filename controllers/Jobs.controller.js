@@ -44,6 +44,7 @@ exports.getId = async (require, res) => {
         "employerName": employer,
         "careerName": career,
         "name": job.name,
+        "addRess":job.addRess,
         "qty": job.qty,
         "salary": job.salary,
         "age": job.age,
@@ -68,6 +69,7 @@ exports.getEmployerId = async (require, res) => {
             "employerName": employer,
             "careerName": career,
             "name": jobs[i].name,
+            "addRess":jobs[i].addRess,
             "qty": jobs[i].qty,
             "salary": jobs[i].salary,
             "age": jobs[i].age,
@@ -85,4 +87,11 @@ exports.getEmployerId = async (require, res) => {
 exports.put = async (req, res) => {
     let job = await Jobs.update(req.body, { where: { id: req.params.id } });
     return res.status(200).json(true)
+}
+exports.delete = async (req, res) => {
+    let roles = await Jobs.destroy({ where: { id: req.params.id } });
+    return res.status(200).json({
+        success: true,
+        data: roles
+    })
 }
