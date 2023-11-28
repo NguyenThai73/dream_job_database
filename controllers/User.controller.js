@@ -41,7 +41,7 @@ exports.create = async (req, res) => {
             fullname: req.body.fullname,
             email: req.body.email,
             password: hashedPassword,
-            status: 1
+            status: 5
         }
         let users = await Users.create(user);
         return res.status(200).json({
@@ -59,23 +59,34 @@ exports.create = async (req, res) => {
 exports.login = async (req, res) => {
     console.log("accessToken", req.body)
     Users.findOne({ where: { email: req.body.email } }).then(user => {
-        bcrypt.compare(req.body.password, user.password).then(async (result) => {
-            if (result) {
-                const accessToken = jwt.sign(user.dataValues.id, process.env.ACCESS_TOKEN_SECRET);
-                console.log("accessToken", accessToken)
-                return res.status(200).json({
-                    accessToken: accessToken,
-                    success: true,
-                    infor: user.dataValues
-                });
-            } else {
-                console.log("Wrong password. Please try again!")
-                return res.status(202).json({
-                    success: false,
-                    message: 'Mật khẩu không đúng',
-                });
-            }
-        })
+        console.log("user.dataValues.status", user.dataValues.status)
+        if(user.dataValues.status > 0){
+            bcrypt.compare(req.body.password, user.password).then(async (result) => {
+                if (result) {
+                    await Users.update({ status: 5 }, { where: { id: user.dataValues.id } });
+                    const accessToken = jwt.sign(user.dataValues.id, process.env.ACCESS_TOKEN_SECRET);
+                    console.log("accessToken", accessToken)
+                    return res.status(200).json({
+                        accessToken: accessToken,
+                        success: true,
+                        infor: user.dataValues
+                    });
+                } else {
+                    await Users.update({ status: user.dataValues.status - 1 }, { where: { id: user.dataValues.id } });
+                    console.log("Wrong password. Please try again!")
+                    return res.status(202).json({
+                        success: false,
+                        message: 'Mật khẩu không đúng',
+                    });
+                }
+            })
+        }else{
+            return res.status(202).json({
+                success: false,
+                message: 'Tài khoản đã bị khoá',
+            });
+        }
+      
     }).catch(err => {
         return res.status(202).json({
             success: false,
@@ -83,6 +94,7 @@ exports.login = async (req, res) => {
         })
     })
 }
+
 exports.loginAdmin = async (req, res) => {
     Users.findOne({ where: { email: req.body.account } }).then(user => {
         bcrypt.compare(req.body.password, user.password).then(async (result) => {
